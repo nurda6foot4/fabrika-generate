@@ -1,0 +1,33 @@
+# Generated output — never commit raw videos or encoded clips
+output/
+
+# Database (job state is local, contains personal credit info)
+*.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Credentials & secrets
+.env
+*.env
+~/.config/higgsfield/
+
+# Claude / RUFLO internal state
+.claude/
+.claude-flow/
+.swarm/
+.mcp.json
+
+# macOS
+.DS_Store
+
+# Character portrait PNGs (generated assets, not source code)
+characters/*.png
+
+# Logs
+*.log

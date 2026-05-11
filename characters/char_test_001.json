@@ -1,0 +1,11 @@
+{
+  "scenario_id": "char_test_001",
+  "job_id_front": "dry-char-front-char_test_001",
+  "job_id_back": "dry-char-back-char_test_001",
+  "job_id": "dry-char-front-char_test_001",
+  "image_path_front": "",
+  "image_path_back": "",
+  "prompt_front": "colorful 2D animated cartoon character, expressive face, clean linework, consistent character design, office worker personality, wearing a simple collared shirt, bright office setting. Character represents: busy busy knowledge worker 28-50. Story angle: Occupation-Specific AI Gap. Single clean front-facing portrait, eye-level camera, subject looking straight ahead. Plain neutral background. Full clear view of face, hair, and outfit. One person only, single frame, no panels, no split screen, no c",
+  "prompt_back": "colorful 2D animated cartoon character, expressive face, clean linework, consistent character design, office worker personality, wearing a simple collared shirt, bright office setting. Character represents: busy busy knowledge worker 28-50. Story angle: Occupation-Specific AI Gap. Single clean back-view portrait, subject facing away from camera, three-quarter rear angle showing the back of the head, hair, and full outfit. Plain neutral background. One person only, single frame, no panels, no spl",
+  "is_dialogue": false
+}

@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fabrika — AI Video Ad Factory by Nurdaulet Zhumaliyev</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080808;
+      --surface: #111111;
+      --border: #1e1e1e;
+      --accent: #6c47ff;
+      --accent2: #00d4aa;
+      --text: #f0f0f0;
+      --muted: #888;
+      --card: #141414;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      background: rgba(8,8,8,0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text); }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-text-links { display: flex; gap: 24px; }
+    .nav-cta {
+      background: var(--accent);
+      color: #fff !important;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: opacity 0.2s !important;
+      white-space: nowrap;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 20px 72px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(108,71,255,0.18) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(108,71,255,0.12);
+      border: 1px solid rgba(108,71,255,0.3);
+      color: #a98dff;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+      letter-spacing: 0.3px;
+      text-align: center;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .hero h1 {
+      font-size: clamp(32px, 8vw, 72px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      max-width: 900px;
+      margin-bottom: 20px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      color: var(--muted);
+      font-size: clamp(15px, 3.5vw, 19px);
+      max-width: 560px;
+      margin-bottom: 40px;
+      line-height: 1.65;
+    }
+
+    /* ── PITCH VIDEO ── */
+    .pitch-wrap {
+      width: 100%;
+      max-width: 860px;
+      margin: 0 auto;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      position: relative;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .pitch-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: #1a1a1a;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .pitch-label {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pitch-video-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #0d0d0d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pitch-video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .pitch-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      color: var(--muted);
+      padding: 24px;
+    }
+    .pitch-placeholder .play-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(108,71,255,0.2);
+      border: 2px solid rgba(108,71,255,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+    .pitch-placeholder p { font-size: 13px; text-align: center; }
+
+    /* ── STATS ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .stat {
+      text-align: center;
+      padding: 40px 16px;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-label { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* ── SECTIONS ── */
+    section { padding: 80px 20px; max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    h2 {
+      font-size: clamp(26px, 5vw, 48px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 560px;
+      margin-bottom: 48px;
+      line-height: 1.65;
+    }
+
+    /* ── DEMO VIDEOS ── */
+    .videos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .video-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .video-card:hover {
+      border-color: rgba(108,71,255,0.4);
+      transform: translateY(-4px);
+    }
+    .video-card-inner {
+      position: relative;
+      width: 100%;
+      padding-top: 177.78%; /* 9:16 portrait */
+    }
+    .video-card-inner video,
+    .video-card-empty {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .video-card video {
+      object-fit: cover;
+      background: #0d0d0d;
+      display: block;
+    }
+    .video-card-empty {
+      background: #0d0d0d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      font-size: 12px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .video-card-empty .icon { font-size: 28px; }
+    .video-meta {
+      padding: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .video-meta h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .video-meta p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      padding: 3px 9px;
+      border-radius: 100px;
+      margin-bottom: 8px;
+    }
+    .tag-hook { background: rgba(255,87,87,0.15); color: #ff8080; }
+    .tag-problem { background: rgba(255,180,50,0.15); color: #ffbb44; }
+    .tag-cta { background: rgba(0,212,170,0.15); color: var(--accent2); }
+
+    /* ── HOW IT WORKS ── */
+    .steps { display: flex; flex-direction: column; }
+    .step {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 20px;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: rgba(108,71,255,0.12);
+      border: 1px solid rgba(108,71,255,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .step-body h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .step-body p { color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .step-body .tech {
+      margin-top: 12px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* ── PROBLEMS ── */
+    .problems-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .problem-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+    }
+    .problem-card .emoji { font-size: 26px; margin-bottom: 14px; }
+    .problem-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
+    .problem-card .problem { color: #ff8080; font-size: 13px; margin-bottom: 10px; line-height: 1.6; }
+    .problem-card .solution { color: var(--accent2); font-size: 13px; line-height: 1.6; }
+    .problem-card .arrow {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      margin: 8px 0;
+    }
+
+    /* ── STACK ── */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .stack-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .stack-card:hover { border-color: rgba(108,71,255,0.3); }
+    .stack-icon { font-size: 28px; margin-bottom: 10px; }
+    .stack-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .stack-card p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* ── CONTACT ── */
+    .contact-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 60px 20px 100px;
+      text-align: center;
+    }
+    .contact-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 56px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-glow {
+      position: absolute;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(108,71,255,0.15) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .contact-box h2 { margin-bottom: 14px; }
+    .contact-box p { color: var(--muted); font-size: 16px; margin-bottom: 36px; line-height: 1.65; }
+    .contact-links {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn:hover { opacity: 0.85; transform: translateY(-2px); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+      gap: 12px;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    /* ══════════════════════════════════════
+       MOBILE — iPhone (≤ 640px)
+    ══════════════════════════════════════ */
+    @media (max-width: 640px) {
+
+      /* Nav — hide text links, keep logo + CTA */
+      nav { padding: 14px 16px; }
+      .nav-text-links { display: none; }
+      .nav-links { gap: 0; }
+
+      /* Hero */
+      .hero { padding: 100px 16px 56px; }
+      .hero h1 { letter-spacing: -1px; }
+      .badge { font-size: 11px; padding: 5px 12px; }
+
+      /* Pitch — keep 16:9 on mobile too */
+      .pitch-wrap { border-radius: 12px; }
+      .pitch-label { display: none; }
+
+      /* Stats — 2×2 grid */
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+      .stat {
+        padding: 28px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      /* remove right border on even cells, restore grid borders cleanly */
+      .stat:nth-child(2) { border-right: none; }
+      .stat:nth-child(3) { border-bottom: none; }
+      .stat:nth-child(4) { border-right: none; border-bottom: none; }
+      .stat-num { font-size: 30px; }
+      .stat-label { font-size: 11px; }
+
+      /* Sections */
+      section { padding: 56px 16px; }
+      .section-sub { font-size: 15px; margin-bottom: 36px; }
+      h2 { letter-spacing: -0.5px; }
+
+      /* Videos — horizontal scroll on mobile, one card at a time */
+      .videos-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 12px;
+        padding-bottom: 8px;
+        scrollbar-width: none;
+      }
+      .videos-grid::-webkit-scrollbar { display: none; }
+      .video-card {
+        flex: 0 0 calc(100vw - 48px);
+        scroll-snap-align: center;
+        min-width: 0;
+      }
+
+      /* Steps */
+      .step { gap: 14px; padding: 22px 0; }
+      .step-num { width: 38px; height: 38px; font-size: 15px; border-radius: 8px; }
+      .step-body h3 { font-size: 15px; }
+      .step-body p { font-size: 13px; }
+
+      /* Problems */
+      .problems-grid { grid-template-columns: 1fr; gap: 12px; }
+      .problem-card { padding: 20px; }
+
+      /* Stack — 2 columns on mobile */
+      .stack-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .stack-card { padding: 16px 12px; }
+      .stack-icon { font-size: 24px; margin-bottom: 8px; }
+      .stack-card h4 { font-size: 13px; }
+      .stack-card p { font-size: 11px; }
+
+      /* Contact */
+      .contact-section { padding: 48px 16px 72px; }
+      .contact-box { padding: 40px 20px; border-radius: 16px; }
+      .contact-box p { font-size: 15px; }
+      .btn { width: 100%; justify-content: center; padding: 16px 20px; font-size: 15px; }
+      .contact-links { flex-direction: column; }
+
+      /* Footer */
+      footer { flex-direction: column; text-align: center; padding: 24px 16px; gap: 6px; }
+
+      /* Honest note */
+      .honest-note { padding: 0 16px 48px; }
+    }
+
+    /* Tablet tweaks (641–900px) */
+    @media (min-width: 641px) and (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .nav-text-links { gap: 16px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .stat:nth-child(2) { border-right: none; }
+      .stat:nth-child(3) { border-top: 1px solid var(--border); }
+      .stat:nth-child(4) { border-right: none; border-top: 1px solid var(--border); }
+      .videos-grid { grid-template-columns: repeat(3, 1fr); }
+      .stack-grid { grid-template-columns: repeat(3, 1fr); }
+      .problems-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#"><span>F</span>abrika</a>
+  <div class="nav-links">
+    <div class="nav-text-links">
+      <a href="#demo">Demo</a>
+      <a href="#how">How it works</a>
+      <a href="#problems">Challenges</a>
+    </div>
+    <a href="#contact" class="nav-cta">Get in touch</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="badge">
+    <div class="badge-dot"></div>
+    Built for Higgsfield — by Nurdaulet Zhumaliyev
+  </div>
+  <h1>I built an <em>AI video ad factory</em> on top of Higgsfield</h1>
+  <p class="hero-sub">
+    Feed it a creative brief. It generates characters, writes scene-by-scene prompts,
+    produces 16 ready-to-air video clips — fully automated, no human in the loop.
+  </p>
+
+  <!-- Pitch video -->
+  <div class="pitch-wrap">
+    <div class="pitch-bar">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+      <span class="pitch-label">pitch.mp4 — Nurdaulet explains the project</span>
+    </div>
+    <div class="pitch-video-container">
+      <!-- Replace pitch-placeholder with: <video src="videos/pitch.mp4" controls poster=""></video> -->
+      <div class="pitch-placeholder">
+        <div class="play-icon">▶</div>
+        <p>Drop your pitch video here — <code>videos/pitch.mp4</code></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">16</div>
+    <div class="stat-label">Video clips — 1 HOOK · 5 PROBLEM · 7 SOLUTION · 3 CTA</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">28</div>
+    <div class="stat-label">Images generated — 16 keyframes + 2 character portraits</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">256cr</div>
+    <div class="stat-label">Credits per clean production run</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">67 min</div>
+    <div class="stat-label">Brief → 16 Premiere-ready clips, fully automated</div>
+  </div>
+</div>
+
+<!-- HONEST NOTE -->
+<div style="text-align:center; padding: 0 24px 56px; border-bottom: 1px solid var(--border);">
+  <p style="color: var(--muted); font-size: 14px; max-width: 640px; margin: 0 auto; line-height: 1.8;">
+    <strong style="color: var(--text);">Honest building cost:</strong>
+    ~2,900 credits and 162 keyframe generations were spent while debugging — wrong character refs, split-screen bugs,
+    parser failures. The 256cr figure is what one <em>correct</em> run costs after all those problems were solved.
+    The 2,900cr is the cost of actually learning the API.
+  </p>
+</div>
+
+<!-- REAL USE CASE CALLOUT -->
+<div style="max-width:860px; margin:0 auto; padding:0 24px 56px;">
+  <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:32px 36px; display:flex; gap:20px; align-items:flex-start;">
+    <div style="font-size:28px; flex-shrink:0; margin-top:2px;">📋</div>
+    <div>
+      <div style="font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent2); margin-bottom:8px;">Real client · Real budget · Real Meta ads</div>
+      <p style="color:var(--text); font-size:15px; line-height:1.7; margin:0;">
+        This pipeline was built for <strong>Zimran's</strong> creative playbook — a company that actively spends on Meta ad campaigns.
+        The HTML brief fed into the system isn't made up: it's a validated Fabrika scenario pack, the same format
+        a media buyer would hand off before a campaign launch.
+        The output goes straight into their creative testing workflow to check hypotheses and optimise spend.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO VIDEOS -->
+<section id="demo">
+  <div class="section-tag">Output</div>
+  <h2>What came out</h2>
+  <p class="section-sub">Three clips from the final edit — a two-person dialogue ad for Coursiv, fully AI-generated from brief to Premiere-ready file.</p>
+
+  <div class="videos-grid">
+
+    <!-- Video 1 — replace video-card-empty with actual video tag -->
+    <div class="video-card">
+      <div class="video-card-inner">
+        <div class="video-card-empty">
+          <!-- <video src="videos/file 1.mp4" controls playsinline muted loop></video> -->
+          <div class="icon">🎬</div>
+          <span>videos/file 1.mp4</span>
+        </div>
+      </div>
+      <div class="video-meta">
+        <h4>Video 1</h4>
+        <p>From the final edit — AI-generated clip, ready for Meta.</p>
+      </div>
+    </div>
+
+    <!-- Video 2 -->
+    <div class="video-card">
+      <div class="video-card-inner">
+        <div class="video-card-empty">
+          <!-- <video src="videos/file 2.mp4" controls playsinline muted loop></video> -->
+          <div class="icon">🎬</div>
+          <span>videos/file 2.mp4</span>
+        </div>
+      </div>
+      <div class="video-meta">
+        <h4>Video 2</h4>
+        <p>From the final edit — AI-generated clip, ready for Meta.</p>
+      </div>
+    </div>
+
+    <!-- Video 3 -->
+    <div class="video-card">
+      <div class="video-card-inner">
+        <div class="video-card-empty">
+          <!-- <video src="videos/file 3.mp4" controls playsinline muted loop></video> -->
+          <div class="icon">🎬</div>
+          <span>videos/file 3.mp4</span>
+        </div>
+      </div>
+      <div class="video-meta">
+        <h4>Video 3</h4>
+        <p>From the final edit — AI-generated clip, ready for Meta.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <p style="text-align:center; color: var(--muted); font-size:13px; margin-top:24px;">
+    To enable videos: copy <code>file 1.mp4</code>, <code>file 2.mp4</code>, <code>file 3.mp4</code> into <code>landing/videos/</code>,
+    then uncomment the <code>&lt;video&gt;</code> tags above.
+  </p>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="max-width:1100px; margin:0 auto;">
+  <div class="section-tag">Process</div>
+  <h2>How the pipeline works</h2>
+  <p class="section-sub">Five steps from a text brief to 16 encoded video clips. No manual work between them.</p>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Parse the creative brief</h3>
+        <p>
+          The system reads an HTML report exported from Fabrika (Higgsfield's creative planning tool).
+          It extracts the story direction, target audience, 13 scenes with speaker labels, and voiceover lines —
+          then expands each scene into individual clips per speaker so Person A and Person B never share a frame.
+        </p>
+        <div class="tech">
+          <span class="chip">Python</span>
+          <span class="chip">BeautifulSoup</span>
+          <span class="chip">Regex parser</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Generate two character portraits</h3>
+        <p>
+          Before any video is made, the system creates two reference images — one for each person.
+          Person A: a man, navy t-shirt, home office. Person B: a woman, light grey sweater, home office.
+          These portraits are saved and reused as the "face lock" for every keyframe in the video.
+        </p>
+        <div class="tech">
+          <span class="chip">Higgsfield Image API</span>
+          <span class="chip">nano_banana_2</span>
+          <span class="chip">9:16 portrait</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Generate a keyframe per clip</h3>
+        <p>
+          For each of the 16 clips, the system writes a detailed visual prompt — shot type, mood, lighting,
+          environment — and generates a single still image using the matching character portrait as a reference.
+          The system automatically picks Person A's portrait when Person A is speaking, and Person B's when Person B is speaking.
+        </p>
+        <div class="tech">
+          <span class="chip">Higgsfield Image API</span>
+          <span class="chip">nano_banana_2</span>
+          <span class="chip">Character ref injection</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Animate each keyframe into a video</h3>
+        <p>
+          Each approved keyframe is sent to the video model with a motion prompt — duration (4s, 6s, or 8s),
+          camera movement, and the voiceover text. The model animates the still image into a live video clip
+          with lip-sync audio.
+        </p>
+        <div class="tech">
+          <span class="chip">Higgsfield Video API</span>
+          <span class="chip">veo3_1</span>
+          <span class="chip">4–8 second clips</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h3>Encode, validate and package</h3>
+        <p>
+          Every raw video is transcoded to H.264 1080×1920 (9:16 vertical), validated for resolution and codec,
+          and saved with a JSON sidecar file containing full provenance — prompts used, job IDs, credits spent.
+          Ready to drag into Adobe Premiere.
+        </p>
+        <div class="tech">
+          <span class="chip">FFmpeg</span>
+          <span class="chip">SQLite job tracker</span>
+          <span class="chip">JSON sidecar</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROBLEMS SOLVED -->
+<section id="problems">
+  <div class="section-tag">Engineering</div>
+  <h2>Problems I ran into<br/>and how I fixed them</h2>
+  <p class="section-sub">Building on a real AI API means dealing with real surprises. Here's what broke and what I did about it.</p>
+
+  <div class="problems-grid">
+
+    <div class="problem-card">
+      <div class="emoji">🖼️</div>
+      <h3>The AI kept making split-screen collages</h3>
+      <p class="problem">Every keyframe came back as a 4-panel storyboard — four angles of the same character in one image. Completely unusable for video.</p>
+      <div class="arrow">→ Fix</div>
+      <p class="solution">Added explicit "negative" prompts to every image request: <em>no panels, no split screen, no collage, single continuous scene</em>. Also rewrote the character reference workflow to generate single portraits instead of character sheets.</p>
+    </div>
+
+    <div class="problem-card">
+      <div class="emoji">👥</div>
+      <h3>Person A and Person B looked identical</h3>
+      <p class="problem">Both characters came out as the same man in a navy shirt. The system was using the same character description for both — because no one told it they should be different people.</p>
+      <div class="arrow">→ Fix</div>
+      <p class="solution">Built a separate character description library for each person per format. Person B became a woman with shoulder-length brown hair and a light grey sweater — visually unmistakeable from Person A.</p>
+    </div>
+
+    <div class="problem-card">
+      <div class="emoji">💬</div>
+      <h3>Dialogue lines weren't being assigned to speakers</h3>
+      <p class="problem">The original scenes contained lines like <code>Person A: 'text'</code> but the parser ignored them — the speaker labels ended up as leftover junk text in the visual prompt.</p>
+      <div class="arrow">→ Fix</div>
+      <p class="solution">Wrote a dedicated dialogue expander that extracts every speaker block using regex, splits long speeches into 8-second clips, and tags each clip with who is speaking — so character ref selection is automatic.</p>
+    </div>
+
+    <div class="problem-card">
+      <div class="emoji">⛔</div>
+      <h3>The pipeline crashed waiting for keyboard input</h3>
+      <p class="problem">The pipeline asked "Approve keyframe? y/n" for each clip. When run in the background or unattended, it hit <code>EOFError</code> and died after the first clip.</p>
+      <div class="arrow">→ Fix</div>
+      <p class="solution">Added an <code>--auto-approve</code> flag that skips the human checkpoint entirely. Batch runs now complete all 16 clips without interruption.</p>
+    </div>
+
+    <div class="problem-card">
+      <div class="emoji">💸</div>
+      <h3>The budget was razor-thin — no room for trial and error</h3>
+      <p class="problem">Claude's $20/month plan has hard context limits. Higgsfield gave me 1,200 credits via a promo code — barely enough if every generation went right. Wrong prompts, parser bugs, and character mismatches burned credits fast with nothing to show for it.</p>
+      <div class="arrow">→ Fix</div>
+      <p class="solution">Used <strong>RUFLO</strong> — an open-source LLM orchestrator — to route tasks to the right model at the right moment, avoiding expensive Claude calls for mechanical work. The <strong>LLM Council skill</strong> let multiple models cross-check prompts before submitting, catching bad generations before they hit the API and wasted credits.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section style="max-width:1100px; margin:0 auto;">
+  <div class="section-tag">Stack</div>
+  <h2>What I used</h2>
+  <p class="section-sub">Every tool chosen for a reason — nothing added just to look impressive.</p>
+
+  <div class="stack-grid">
+    <div class="stack-card">
+      <div class="stack-icon">⚡</div>
+      <h4>Higgsfield API</h4>
+      <p>Image generation (nano_banana_2) + video generation (veo3_1). The core engine.</p>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🐍</div>
+      <h4>Python</h4>
+      <p>Pipeline orchestration, HTML parsing, prompt building, scene expansion.</p>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🗄️</div>
+      <h4>SQLite</h4>
+      <p>Tracks every job, clip, cost, and error. Full resume capability if a run is interrupted.</p>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🎞️</div>
+      <h4>FFmpeg</h4>
+      <p>Transcodes raw output to H.264 1080×1920, validates resolution and codec, writes sidecar JSON.</p>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🧠</div>
+      <h4>Claude Code</h4>
+      <p>Used as an agentic coding assistant to build, debug and iterate the full pipeline in real time.</p>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🔀</div>
+      <h4>RUFLO</h4>
+      <p>Open-source LLM orchestrator. Routes tasks to the right model, runs LLM Council cross-checks, and cuts wasted API calls when the budget is tight.</p>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🎬</div>
+      <h4>Adobe Premiere</h4>
+      <p>Final assembly. The pipeline outputs Premiere-ready files — drop in, no re-encoding needed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<div class="contact-section" id="contact">
+  <div class="contact-box">
+    <div class="contact-glow"></div>
+    <div class="section-tag" style="margin-bottom:16px;">Applying to Higgsfield</div>
+    <h2>I want to build this<br/>inside your team</h2>
+    <p>I'm a developer who actually uses Higgsfield to make real things — not just demos. This project is proof I can take an API and ship a complete product around it.</p>
+    <div class="contact-links">
+      <a href="mailto:rmeyramuly@gmail.com" class="btn btn-primary">✉️ rmeyramuly@gmail.com</a>
+      <a href="https://github.com/nurdauletzhumaliyev" class="btn btn-secondary" target="_blank">GitHub</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>Fabrika — AI Video Pipeline by Nurdaulet Zhumaliyev</span>
+  <span>Built with Higgsfield API · Python · FFmpeg</span>
+</footer>
+
+</body>
+</html>
