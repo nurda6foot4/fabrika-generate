@@ -145,5 +145,5 @@ The output feeds directly into **Zimran's** Meta ad creative testing workflow: a
 
 ## Author
 
-**Nurdaulet Zhumaliyev** — rmeyramuly@gmail.com  
-[Landing page](https://nurdauletzhumaliyev.github.io/fabrika-generate) · Built for Higgsfield job application
+**Nurdaulet Zhumaliyev** — [@nurdafoot4](https://t.me/nurdafoot4) on Telegram  
+[GitHub](https://github.com/nurda6foot4/fabrika-generate) · Built for Higgsfield job application
